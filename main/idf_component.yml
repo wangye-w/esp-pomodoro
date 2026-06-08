@@ -1,0 +1,5 @@
+dependencies:
+  espressif/esp_lcd_ssd1681:
+    version: "*"
+  idf: '>=5.0'
+  lvgl/lvgl: ~8.3.0
