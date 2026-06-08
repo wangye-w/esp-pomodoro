@@ -1,8 +1,10 @@
 #include "lcd_screen.h"
 #include "system_init.h"
+#include "app_ui.h"
 
 #include <esp_lcd_panel_ssd1681.h>
 #include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_vendor.h"
 #include "esp_lcd_panel_ops.h"
@@ -165,13 +167,6 @@ void lcd_screen_init()
     ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(panel_handle, true));
 }
 
-static lv_obj_t *meter;
-
-static void set_value(void *indic, int32_t v)
-{
-    lv_meter_set_indicator_end_value(meter, indic, v);
-}
-
 void lcd_lvgl_init()
 {
     // --- Initialize LVGL
@@ -211,4 +206,7 @@ void lcd_lvgl_init()
     esp_timer_handle_t lvgl_tick_timer = NULL;
     ESP_ERROR_CHECK(esp_timer_create(&lvgl_tick_timer_args, &lvgl_tick_timer));
     ESP_ERROR_CHECK(esp_timer_start_periodic(lvgl_tick_timer, LVGL_TICK_PERIOD_MS * 1000));
+
+    xTaskCreate(ui_task, "ui_task", 4*1024, NULL, 5, NULL);
+    xTaskCreate(gui_refresh_task, "gui_refresh_task", 4*1024, NULL, 5, NULL);
 }
