@@ -4,6 +4,8 @@
 #include "freertos/FreeRTOS.h"
 #include "lvgl.h"
 
+extern _lock_t lvgl_api_lock;
+
 void app_main(void)
 {
     ESP_ERROR_CHECK(spi_init());
@@ -13,9 +15,9 @@ void app_main(void)
     lcd_lvgl_init();
 
     while (1) {
-        // raise the task priority of LVGL and/or reduce the handler period can improve the performance
-        // The task running lv_timer_handler should have lower priority than that running `lv_tick_inc`
+        _lock_acquire(&lvgl_api_lock);
         lv_timer_handler();
-        vTaskDelay(pdMS_TO_TICKS(200));
+        _lock_release(&lvgl_api_lock);
+        vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }

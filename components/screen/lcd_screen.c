@@ -208,5 +208,4 @@ void lcd_lvgl_init()
     ESP_ERROR_CHECK(esp_timer_start_periodic(lvgl_tick_timer, LVGL_TICK_PERIOD_MS * 1000));
 
     xTaskCreate(ui_task, "ui_task", 4*1024, NULL, 5, NULL);
-    xTaskCreate(gui_refresh_task, "gui_refresh_task", 4*1024, NULL, 5, NULL);
 }
